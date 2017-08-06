@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">My First Kotlin Application</string>
+    <string name="enter_search_term">Enter a search term</string>
+    <string name="search_button_text">Search</string>
+</resources>
