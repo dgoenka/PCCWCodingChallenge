@@ -5,8 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 
-import com.divyanshgoenka.pccwcodingchallenge.presenter.MainActivityPresenter;
-import com.divyanshgoenka.pccwcodingchallenge.view.MainActivityView;
+import com.divyanshgoenka.pccwcodingchallenge.presenter.UserRepoListPresenter;
+import com.divyanshgoenka.pccwcodingchallenge.view.UserListView;
 import com.mugen.Mugen;
 import com.mugen.MugenCallbacks;
 import com.mugen.attachers.BaseAttacher;
@@ -15,10 +15,10 @@ import com.mugen.attachers.BaseAttacher;
  * Created by divyanshgoenka on 05/08/17.
  */
 
-public class UserRepoListActivity extends AppCompatActivity implements MugenCallbacks,MainActivityView {
+public class UserRepoListActivity extends AppCompatActivity implements MugenCallbacks,UserListView {
     RecyclerView recyclerView;
     BaseAttacher attacher;
-    MainActivityPresenter mainActivityPresenter = new MainActivityPresenter();
+    UserRepoListPresenter userRepoListPresenter = new UserRepoListPresenter();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
     protected void onResume() {
         super.onResume();
         register();
-        mainActivityPresenter.onResume();
+        userRepoListPresenter.onResume();
     }
 
     @Override
@@ -46,7 +46,7 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
      *
      * */
     public void register(){
-        mainActivityPresenter.register(this);
+        userRepoListPresenter.register(this);
 
     }
 
@@ -55,7 +55,7 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
      *
      * */
     public void unregister(){
-        mainActivityPresenter.unregister();
+        userRepoListPresenter.unregister();
 
     }
 

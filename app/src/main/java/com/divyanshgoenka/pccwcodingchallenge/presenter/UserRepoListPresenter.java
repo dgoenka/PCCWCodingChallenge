@@ -1,16 +1,16 @@
 package com.divyanshgoenka.pccwcodingchallenge.presenter;
 
-import com.divyanshgoenka.pccwcodingchallenge.view.MainActivityView;
+import com.divyanshgoenka.pccwcodingchallenge.view.UserListView;
 
 /**
  * Created by divyanshgoenka on 06/08/17.
  */
 
-public class MainActivityPresenter {
-    private MainActivityView mainActivtyView;
+public class UserRepoListPresenter {
+    private UserListView mainActivtyView;
 
-    public void register(MainActivityView mainActivityView) {
-        this.mainActivtyView = mainActivityView;
+    public void register(UserListView userListView) {
+        this.mainActivtyView = userListView;
     }
 
     public void unregister() {

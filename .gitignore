@@ -7,6 +7,7 @@
 /build
 /captures
 .externalNativeBuild
+
 ### Android template
 # Built application files
 *.apk
@@ -27,6 +28,29 @@ out/
 .gradle/
 build/
 
+# Intellij Idea files
+# User-specific stuff:
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/jsLibraryMappings.xml
+
+# Sensitive or high-churn files:
+.idea/dataSources.ids
+.idea/dataSources.xml
+.idea/dataSources.local.xml
+.idea/sqlDataSources.xml
+.idea/dynamic.xml
+.idea/uiDesigner.xml
+
+# Gradle:
+.idea/gradle.xml
+.idea/libraries
+
+# Mongo Explorer plugin:
+.idea/mongoSettings.xml
+
 # Local configuration file (sdk path, etc)
 local.properties
 
@@ -42,19 +66,10 @@ proguard/
 # Android Studio captures folder
 captures/
 
-# Intellij
-*.iml
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/gradle.xml
-.idea/dictionaries
-.idea/libraries
 
 # Keystore files
 *.jks
 
-# External native build folder generated in Android Studio 2.2 and later
-.externalNativeBuild
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
