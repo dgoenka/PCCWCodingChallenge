@@ -11,4 +11,15 @@ import com.divyanshgoenka.pccwcodingchallenge.util.Constants;
  */
 
 public class PCCWCodingChallengeApplication extends Application {
+    private static PCCWCodingChallengeApplication instance;
+
+    public static PCCWCodingChallengeApplication getInstance() {
+        return instance;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        instance = this;
+    }
 }

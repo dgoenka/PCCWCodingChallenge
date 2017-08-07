@@ -1,5 +1,11 @@
 <resources>
-    <string name="app_name">My First Kotlin Application</string>
+    <string name="app_name">PCCW Coding Challenge</string>
     <string name="enter_search_term">Enter a search term</string>
     <string name="search_button_text">Search</string>
+    <string name="okay">OK</string>
+    <string name="no_repos_for_user">No Repositories for this  User</string>
+    <string name="num_repositores">%d Repositories</string>
+    <string name="loading">Loading</string>
+    <string name="connection_error">Connection Error</string>
+    <string name="connection_error_message">Error in fetching data</string>
 </resources>

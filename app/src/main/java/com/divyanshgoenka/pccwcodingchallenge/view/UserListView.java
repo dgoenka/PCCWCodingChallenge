@@ -17,4 +17,8 @@ public interface UserListView {
     void onError(Throwable e);
 
     void showNoReposForUser();
+
+    void clearList();
+
+    void setLoadingState(boolean isLoading, Boolean success);
 }

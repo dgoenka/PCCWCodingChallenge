@@ -38,10 +38,20 @@ dependencies {
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 
     compile 'com.google.code.gson:gson:2.8.1'
 
     compile 'com.afollestad.material-dialogs:core:0.9.4.5'
+
+    compile 'com.jakewharton:butterknife:8.8.0'
+
+    compile 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
+
+    compile 'net.steamcrafted:load-toast:1.0.10'
+
+
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.0'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:26.0.0-beta2'

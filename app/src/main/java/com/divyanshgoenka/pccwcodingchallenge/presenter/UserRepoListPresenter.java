@@ -1,7 +1,9 @@
 package com.divyanshgoenka.pccwcodingchallenge.presenter;
 
 import android.os.Bundle;
+import android.util.Log;
 
+import com.divyanshgoenka.pccwcodingchallenge.android.util.BundleUtils;
 import com.divyanshgoenka.pccwcodingchallenge.model.Repo;
 import com.divyanshgoenka.pccwcodingchallenge.model.User;
 import com.divyanshgoenka.pccwcodingchallenge.retrofit.GitHubApi;
@@ -21,6 +23,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class UserRepoListPresenter {
+    private static final String TAG = "UserRepoListPresenter";
     private UserListView mainActivtyView;
 
     String username;
@@ -48,7 +51,7 @@ public class UserRepoListPresenter {
 
             if(user!=null && user.getPublicRepos()>0)
             {
-                number_of_pages = (int) Math.ceil(user.getPublicRepos()/Constants.NO_ITEMS_PER_PAGE);
+                number_of_pages = (int) Math.ceil((double) user.getPublicRepos()/ (double)Constants.NO_ITEMS_PER_PAGE);
                 fetchRepos(++currentPage);
             }else if(user!=null && user.getPublicRepos() == 0){
                 mainActivtyView.showNoReposForUser();
@@ -73,19 +76,24 @@ public class UserRepoListPresenter {
 
         @Override
         public void onNext(List<Repo> repos) {
+            if(currentPage==1)
+                mainActivtyView.clearList();
             if(mainActivtyView!=null)
                 mainActivtyView.addToList(repos);
+            setLoading(false,true);
 
         }
 
         @Override
         public void onError(Throwable e) {
+            mainActivtyView.onError(e);
+            setLoading(false,false);
 
         }
 
         @Override
         public void onComplete() {
-            setLoading(false);
+
         }
     };
 
@@ -103,18 +111,20 @@ public class UserRepoListPresenter {
 
 
     private void startFetching() {
-        setLoading(true);
+        currentPage = 0;
+        setLoading(true, null);
         fetchTitle();
     }
 
     private void continueFetching() {
-        setLoading(true);
+        setLoading(true, null);
         fetchRepos(++currentPage);
     }
 
     private void fetchRepos(int pageNumber) {
         /// TODO Can be changed to use cache in the Observable
-        gitHubApi.getUserRepos(username).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(reposObserverable);
+        Log.e(TAG,"in fetchRepos, fetching page number: "+pageNumber+" number_of_pages is "+number_of_pages);
+        gitHubApi.getUserRepos(username,pageNumber).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(reposObserverable);
     }
 
     private void fetchTitle() {
@@ -127,12 +137,14 @@ public class UserRepoListPresenter {
         return isLoading;
     }
 
-    public synchronized void setLoading(boolean isLoading) {
+    public synchronized void setLoading(boolean isLoading, Boolean success) {
         this.isLoading = isLoading;
+        mainActivtyView.setLoadingState(isLoading, success);
+
     }
 
     public void onCreate(Bundle bundle) {
-        username = bundle.getString(Constants.KEYS_USER_ID_KEY, Constants.DEFAULT_USER_ID);
+        username = BundleUtils.getString(bundle,Constants.KEYS_USER_ID_KEY, Constants.DEFAULT_USER_ID);
     }
 
     public void onLoadMore() {
@@ -142,6 +154,10 @@ public class UserRepoListPresenter {
 
 
     public boolean hasLoadedAllItems() {
-        return false;
+        return currentPage>=number_of_pages;
+    }
+
+    public void onRefresh() {
+        startFetching();
     }
 }
