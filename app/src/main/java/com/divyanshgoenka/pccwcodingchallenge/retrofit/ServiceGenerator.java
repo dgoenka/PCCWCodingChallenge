@@ -9,28 +9,15 @@ import com.divyanshgoenka.pccwcodingchallenge.util.Constants;
 
 public class ServiceGenerator {
 
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
-                    .baseUrl(Constants.API_URL)
+                    .client(new OkHttpClient.Builder().build())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create());
 
-    private static Retrofit retrofit;
-
-    public static <S> S createService(
+    public static <S> S createService(String baseUrl,
             Class<S> serviceClass) {
-
-
-            if (!httpClient.interceptors().contains(interceptor)) {
-                httpClient.addInterceptor(interceptor);
-
-                builder.client(httpClient.build());
-                retrofit = builder.build();
-            }
-
-
+        Retrofit retrofit = builder.baseUrl(baseUrl).build();
         return retrofit.create(serviceClass);
     }
 }

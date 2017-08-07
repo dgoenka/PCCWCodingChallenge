@@ -4,28 +4,52 @@ package com.divyanshgoenka.pccwcodingchallenge.model;
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
-public class Owner {
+public class User {
 
     @SerializedName("avatar_url")
     private String mAvatarUrl;
+    @SerializedName("bio")
+    private String mBio;
+    @SerializedName("blog")
+    private String mBlog;
+    @SerializedName("company")
+    private Object mCompany;
+    @SerializedName("created_at")
+    private String mCreatedAt;
+    @SerializedName("email")
+    private Object mEmail;
     @SerializedName("events_url")
     private String mEventsUrl;
+    @SerializedName("followers")
+    private Long mFollowers;
     @SerializedName("followers_url")
     private String mFollowersUrl;
+    @SerializedName("following")
+    private Long mFollowing;
     @SerializedName("following_url")
     private String mFollowingUrl;
     @SerializedName("gists_url")
     private String mGistsUrl;
     @SerializedName("gravatar_id")
     private String mGravatarId;
+    @SerializedName("hireable")
+    private Object mHireable;
     @SerializedName("html_url")
     private String mHtmlUrl;
     @SerializedName("id")
     private Long mId;
+    @SerializedName("location")
+    private String mLocation;
     @SerializedName("login")
     private String mLogin;
+    @SerializedName("name")
+    private String mName;
     @SerializedName("organizations_url")
     private String mOrganizationsUrl;
+    @SerializedName("public_gists")
+    private Long mPublicGists;
+    @SerializedName("public_repos")
+    private int mPublicRepos;
     @SerializedName("received_events_url")
     private String mReceivedEventsUrl;
     @SerializedName("repos_url")
@@ -38,6 +62,8 @@ public class Owner {
     private String mSubscriptionsUrl;
     @SerializedName("type")
     private String mType;
+    @SerializedName("updated_at")
+    private String mUpdatedAt;
     @SerializedName("url")
     private String mUrl;
 
@@ -49,6 +75,46 @@ public class Owner {
         mAvatarUrl = avatarUrl;
     }
 
+    public String getBio() {
+        return mBio;
+    }
+
+    public void setBio(String bio) {
+        mBio = bio;
+    }
+
+    public String getBlog() {
+        return mBlog;
+    }
+
+    public void setBlog(String blog) {
+        mBlog = blog;
+    }
+
+    public Object getCompany() {
+        return mCompany;
+    }
+
+    public void setCompany(Object company) {
+        mCompany = company;
+    }
+
+    public String getCreatedAt() {
+        return mCreatedAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        mCreatedAt = createdAt;
+    }
+
+    public Object getEmail() {
+        return mEmail;
+    }
+
+    public void setEmail(Object email) {
+        mEmail = email;
+    }
+
     public String getEventsUrl() {
         return mEventsUrl;
     }
@@ -57,12 +123,28 @@ public class Owner {
         mEventsUrl = eventsUrl;
     }
 
+    public Long getFollowers() {
+        return mFollowers;
+    }
+
+    public void setFollowers(Long followers) {
+        mFollowers = followers;
+    }
+
     public String getFollowersUrl() {
         return mFollowersUrl;
     }
 
     public void setFollowersUrl(String followersUrl) {
         mFollowersUrl = followersUrl;
+    }
+
+    public Long getFollowing() {
+        return mFollowing;
+    }
+
+    public void setFollowing(Long following) {
+        mFollowing = following;
     }
 
     public String getFollowingUrl() {
@@ -89,6 +171,14 @@ public class Owner {
         mGravatarId = gravatarId;
     }
 
+    public Object getHireable() {
+        return mHireable;
+    }
+
+    public void setHireable(Object hireable) {
+        mHireable = hireable;
+    }
+
     public String getHtmlUrl() {
         return mHtmlUrl;
     }
@@ -105,6 +195,14 @@ public class Owner {
         mId = id;
     }
 
+    public String getLocation() {
+        return mLocation;
+    }
+
+    public void setLocation(String location) {
+        mLocation = location;
+    }
+
     public String getLogin() {
         return mLogin;
     }
@@ -113,12 +211,36 @@ public class Owner {
         mLogin = login;
     }
 
+    public String getName() {
+        return mName;
+    }
+
+    public void setName(String name) {
+        mName = name;
+    }
+
     public String getOrganizationsUrl() {
         return mOrganizationsUrl;
     }
 
     public void setOrganizationsUrl(String organizationsUrl) {
         mOrganizationsUrl = organizationsUrl;
+    }
+
+    public Long getPublicGists() {
+        return mPublicGists;
+    }
+
+    public void setPublicGists(Long publicGists) {
+        mPublicGists = publicGists;
+    }
+
+    public int getPublicRepos() {
+        return mPublicRepos;
+    }
+
+    public void setPublicRepos(int publicRepos) {
+        mPublicRepos = publicRepos;
     }
 
     public String getReceivedEventsUrl() {
@@ -167,6 +289,14 @@ public class Owner {
 
     public void setType(String type) {
         mType = type;
+    }
+
+    public String getUpdatedAt() {
+        return mUpdatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        mUpdatedAt = updatedAt;
     }
 
     public String getUrl() {
