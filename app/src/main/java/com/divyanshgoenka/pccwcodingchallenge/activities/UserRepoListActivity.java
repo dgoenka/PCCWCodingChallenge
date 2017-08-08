@@ -30,7 +30,6 @@ import com.squareup.picasso.Picasso;
 
 import net.steamcrafted.loadtoast.LoadToast;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +55,7 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
     LoadToast loadToast;
 
     TitleViewHolder titleViewHolder = new TitleViewHolder();
+
     private User user;
 
     @Override
@@ -89,29 +89,39 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(Constants.KEYS_ITEM_LIST, repos);
-        outState.putSerializable(Constants.KEYS_USER, user);
-        outState.putString(Constants.KEYS_USER_ID_KEY,userRepoListPresenter.getUsername());
-        outState.putInt(Constants.KEYS_CURRENT_PAGE,userRepoListPresenter.getCurrentPage());
-        outState.putInt(Constants.KEYS_NO_OF_PAGES,userRepoListPresenter.getNumberOfPages());
-
+        outState.putSerializable(Constants.Keys.ITEM_LIST, repos);
+        outState.putSerializable(Constants.Keys.USER, user);
+        outState.putString(Constants.Keys.USER_ID,userRepoListPresenter.getUsername());
+        outState.putInt(Constants.Keys.CURRENT_PAGE,userRepoListPresenter.getCurrentPage());
+        outState.putInt(Constants.Keys.NO_OF_PAGES,userRepoListPresenter.getNumberOfPages());
     }
 
     private void setupViews(Bundle savedInstanceState) {
-        swipeRefreshLayout.setOnRefreshListener(this);
-        Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
-        String username = BundleUtils.getString(bundle,Constants.KEYS_USER_ID_KEY,Constants.DEFAULT_USER_ID);
-        int currentPage = BundleUtils.getInt(bundle,Constants.KEYS_CURRENT_PAGE,Constants.ZERO);
-        int noOfPages = BundleUtils.getInt(bundle,Constants.KEYS_NO_OF_PAGES,Constants.ZERO);
-        user = (User) BundleUtils.getSerializable(bundle,Constants.KEYS_USER,null);
-        repos.addAll((ArrayList<Repo>)BundleUtils.getSerializable(bundle,Constants.KEYS_ITEM_LIST,new ArrayList<>()));
+        readFromBundle(savedInstanceState == null ? getIntent().getExtras() : savedInstanceState);
+        setupRecyclerView();
+        setupActionBar();
+    }
+
+    public void readFromBundle(Bundle bundle){
+        String username = BundleUtils.getString(bundle, Constants.Keys.USER_ID, Constants.Api.DEFAULT_USER_ID);
+        int currentPage = BundleUtils.getInt(bundle, Constants.Keys.CURRENT_PAGE, Constants.ScrollLogic.PAGE_START_ZERO);
+        int noOfPages = BundleUtils.getInt(bundle, Constants.Keys.NO_OF_PAGES, Constants.ScrollLogic.PAGE_START_ZERO);
+        user = (User) BundleUtils.getSerializable(bundle, Constants.Keys.USER,null);
+        repos.addAll((ArrayList<Repo>)BundleUtils.getSerializable(bundle, Constants.Keys.ITEM_LIST,new ArrayList<>()));
         userRepoListPresenter.onCreate(username,currentPage,noOfPages);
+    }
+
+    public void setupRecyclerView(){
+        swipeRefreshLayout.setOnRefreshListener(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
+    }
+
+
+    public void setupActionBar(){
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.title_view_layout);
         ButterKnife.bind(titleViewHolder, getSupportActionBar().getCustomView());
-
     }
 
     @Override
@@ -190,11 +200,15 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
                 .show();
         if(loadToast!=null)
             loadToast.error();
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void showNoReposForUser() {
         recyclerView.setVisibility(View.GONE);
+        swipeRefreshLayout.setRefreshing(false);
+        if(loadToast!=null)
+            loadToast.success();
         noReposView.setVisibility(View.VISIBLE);
     }
 
@@ -230,7 +244,7 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
             repoListAdapter = new RepoListAdapter(this.repos);
             recyclerView.setAdapter(repoListAdapter);
             attacher = Mugen.with(recyclerView, this);
-            attacher.loadMoreOffset(Constants.LOAD_MORE_OFFSET);
+            attacher.loadMoreOffset(Constants.ScrollLogic.LOAD_MORE_OFFSET);
             attacher.start();
 
         }

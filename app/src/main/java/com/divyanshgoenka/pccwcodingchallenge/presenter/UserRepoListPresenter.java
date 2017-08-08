@@ -26,12 +26,12 @@ public class UserRepoListPresenter {
 
     String username;
 
-    private GitHubApi gitHubApi = ServiceGenerator.createService(Constants.API_URL, GitHubApi.class);
+    private GitHubApi gitHubApi = ServiceGenerator.createService(Constants.Api.API_URL, GitHubApi.class);
 
     private boolean isLoading;
 
-    private int numberOfPages = 0;
-    private int currentPage = 0;
+    private int numberOfPages = Constants.ScrollLogic.PAGE_START_ZERO;
+    private int currentPage = Constants.ScrollLogic.PAGE_START_ZERO;
 
     public int getNumberOfPages() {
         return numberOfPages;
@@ -55,9 +55,9 @@ public class UserRepoListPresenter {
             }
 
             if (user != null && user.getPublicRepos() > 0) {
-                numberOfPages = (int) Math.ceil((double) user.getPublicRepos() / (double) Constants.NO_ITEMS_PER_PAGE);
+                numberOfPages = (int) Math.ceil((double) user.getPublicRepos() / (double) Constants.ScrollLogic.NO_ITEMS_PER_PAGE);
                 fetchRepos(++currentPage);
-            } else if (user != null && user.getPublicRepos() == 0) {
+            } else if (user != null && user.getPublicRepos() == 0 && mainActivtyView!=null) {
                 mainActivtyView.showNoReposForUser();
             }
         }
@@ -80,12 +80,13 @@ public class UserRepoListPresenter {
 
         @Override
         public void onNext(List<Repo> repos) {
-            if (currentPage == 1)
-                mainActivtyView.clearList();
-            if (mainActivtyView != null)
-                mainActivtyView.addToList(repos);
-            setLoading(false, true);
+           if(mainActivtyView!=null) {
+               if (currentPage == 1)
+                   mainActivtyView.clearList();
+                   mainActivtyView.addToList(repos);
+           }
 
+           setLoading(false, true);
         }
 
         @Override

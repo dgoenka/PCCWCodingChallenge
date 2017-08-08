@@ -5,16 +5,24 @@ package com.divyanshgoenka.pccwcodingchallenge.util;
  */
 
 public class Constants {
-    public static final String API_URL = "https://api.github.com/";
-    public static final String DEFAULT_USER_ID = "facebook";
-    public static final int LOAD_MORE_OFFSET = 5;
-    public static final String KEYS_USER_ID_KEY = "username";
-    public static final int NO_ITEMS_PER_PAGE = 30;
-    public static final String KEYS_CURRENT_PAGE = "KEYS_CURRENT_PAGE";
-    public static final String KEYS_NO_OF_PAGES = "KEYS_NO_OF_PAGES";
-    public static final String KEYS_ITEM_LIST = "KEYS_ITEM_LIST";
-    public static final int ZERO = 0;
 
-    public static final String KEYS_USER = "KEYS_USER";
+    public static class Keys{
+        public static final String USER_ID = "USER_ID";
+        public static final String CURRENT_PAGE = "CURRENT_PAGE";
+        public static final String NO_OF_PAGES = "NO_OF_PAGES";
+        public static final String ITEM_LIST = "ITEM_LIST";
+        public static final String USER = "USER";
+    }
 
+    public static class Api{
+        public static final String API_URL = "https://api.github.com/";
+        public static final String DEFAULT_USER_ID = "divyanshgoenka-tinklabs";
+    }
+
+    public static class ScrollLogic{
+
+        public static final int LOAD_MORE_OFFSET = 5;
+        public static final int NO_ITEMS_PER_PAGE = 30;
+        public static final int PAGE_START_ZERO = 0;
+    }
 }
