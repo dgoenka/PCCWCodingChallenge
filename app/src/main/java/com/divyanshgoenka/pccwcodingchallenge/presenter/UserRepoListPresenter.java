@@ -1,9 +1,7 @@
 package com.divyanshgoenka.pccwcodingchallenge.presenter;
 
-import android.os.Bundle;
 import android.util.Log;
 
-import com.divyanshgoenka.pccwcodingchallenge.android.util.BundleUtils;
 import com.divyanshgoenka.pccwcodingchallenge.model.Repo;
 import com.divyanshgoenka.pccwcodingchallenge.model.User;
 import com.divyanshgoenka.pccwcodingchallenge.retrofit.GitHubApi;
@@ -32,11 +30,18 @@ public class UserRepoListPresenter {
 
     private boolean isLoading;
 
-    int number_of_pages =0;
-    int currentPage = 0;
+    private int numberOfPages = 0;
+    private int currentPage = 0;
 
+    public int getNumberOfPages() {
+        return numberOfPages;
+    }
 
-    Observer<User> userObserver = new Observer<User>(){
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    Observer<User> userObserver = new Observer<User>() {
         @Override
         public void onSubscribe(Disposable d) {
 
@@ -45,15 +50,14 @@ public class UserRepoListPresenter {
         @Override
         public void onNext(User user) {
 
-            if(mainActivtyView!=null){
+            if (mainActivtyView != null) {
                 mainActivtyView.showUserInfo(user);
             }
 
-            if(user!=null && user.getPublicRepos()>0)
-            {
-                number_of_pages = (int) Math.ceil((double) user.getPublicRepos()/ (double)Constants.NO_ITEMS_PER_PAGE);
+            if (user != null && user.getPublicRepos() > 0) {
+                numberOfPages = (int) Math.ceil((double) user.getPublicRepos() / (double) Constants.NO_ITEMS_PER_PAGE);
                 fetchRepos(++currentPage);
-            }else if(user!=null && user.getPublicRepos() == 0){
+            } else if (user != null && user.getPublicRepos() == 0) {
                 mainActivtyView.showNoReposForUser();
             }
         }
@@ -76,18 +80,18 @@ public class UserRepoListPresenter {
 
         @Override
         public void onNext(List<Repo> repos) {
-            if(currentPage==1)
+            if (currentPage == 1)
                 mainActivtyView.clearList();
-            if(mainActivtyView!=null)
+            if (mainActivtyView != null)
                 mainActivtyView.addToList(repos);
-            setLoading(false,true);
+            setLoading(false, true);
 
         }
 
         @Override
         public void onError(Throwable e) {
             mainActivtyView.onError(e);
-            setLoading(false,false);
+            setLoading(false, false);
 
         }
 
@@ -106,7 +110,13 @@ public class UserRepoListPresenter {
     }
 
     public void onResume() {
-        startFetching();
+        Log.e(TAG,"in UserRepoListPresenter.onResume");
+        if (!mainActivtyView.canShowData()) {
+            startFetching();
+            Log.e(TAG,"in UserRepoListPresenter.onResume, starting fetch");
+        }else{
+            Log.e(TAG,"in UserRepoListPresenter.onResume, used fetched data");
+        }
     }
 
 
@@ -123,8 +133,8 @@ public class UserRepoListPresenter {
 
     private void fetchRepos(int pageNumber) {
         /// TODO Can be changed to use cache in the Observable
-        Log.e(TAG,"in fetchRepos, fetching page number: "+pageNumber+" number_of_pages is "+number_of_pages);
-        gitHubApi.getUserRepos(username,pageNumber).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(reposObserverable);
+        Log.e(TAG, "in fetchRepos, fetching page number: " + pageNumber + " numberOfPages is " + numberOfPages);
+        gitHubApi.getUserRepos(username, pageNumber).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(reposObserverable);
     }
 
     private void fetchTitle() {
@@ -143,8 +153,10 @@ public class UserRepoListPresenter {
 
     }
 
-    public void onCreate(Bundle bundle) {
-        username = BundleUtils.getString(bundle,Constants.KEYS_USER_ID_KEY, Constants.DEFAULT_USER_ID);
+    public void onCreate(String username, int currentPage, int numberOfPages) {
+        this.username = username;
+        this.currentPage = currentPage;
+        this.numberOfPages = numberOfPages;
     }
 
     public void onLoadMore() {
@@ -152,12 +164,15 @@ public class UserRepoListPresenter {
     }
 
 
-
     public boolean hasLoadedAllItems() {
-        return currentPage>=number_of_pages;
+        return currentPage >= numberOfPages;
     }
 
     public void onRefresh() {
         startFetching();
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

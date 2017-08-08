@@ -7,6 +7,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.divyanshgoenka.pccwcodingchallenge.R;
 import com.divyanshgoenka.pccwcodingchallenge.adapter.RepoListAdapter;
+import com.divyanshgoenka.pccwcodingchallenge.android.util.BundleUtils;
 import com.divyanshgoenka.pccwcodingchallenge.android.util.FormatUtils;
 import com.divyanshgoenka.pccwcodingchallenge.model.Repo;
 import com.divyanshgoenka.pccwcodingchallenge.model.User;
@@ -27,6 +30,7 @@ import com.squareup.picasso.Picasso;
 
 import net.steamcrafted.loadtoast.LoadToast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +42,7 @@ import butterknife.ButterKnife;
  */
 
 public class UserRepoListActivity extends AppCompatActivity implements MugenCallbacks, UserListView, SwipeRefreshLayout.OnRefreshListener {
+    public static final String TAG = "UserRepoListActivity";
     UserRepoListPresenter userRepoListPresenter = new UserRepoListPresenter();
 
     @BindView(R.id.recycler_view)
@@ -51,6 +56,7 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
     LoadToast loadToast;
 
     TitleViewHolder titleViewHolder = new TitleViewHolder();
+    private User user;
 
     @Override
     public void onRefresh() {
@@ -68,7 +74,7 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
 
     View titleView;
 
-    final List<Repo> repos = new ArrayList<>();
+    final ArrayList<Repo> repos = new ArrayList<>();
     private RepoListAdapter repoListAdapter;
 
     @Override
@@ -79,9 +85,27 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
         setupViews(savedInstanceState);
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(Constants.KEYS_ITEM_LIST, repos);
+        outState.putSerializable(Constants.KEYS_USER, user);
+        outState.putString(Constants.KEYS_USER_ID_KEY,userRepoListPresenter.getUsername());
+        outState.putInt(Constants.KEYS_CURRENT_PAGE,userRepoListPresenter.getCurrentPage());
+        outState.putInt(Constants.KEYS_NO_OF_PAGES,userRepoListPresenter.getNumberOfPages());
+
+    }
+
     private void setupViews(Bundle savedInstanceState) {
         swipeRefreshLayout.setOnRefreshListener(this);
-        userRepoListPresenter.onCreate(savedInstanceState == null ? getIntent().getExtras() : savedInstanceState);
+        Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
+        String username = BundleUtils.getString(bundle,Constants.KEYS_USER_ID_KEY,Constants.DEFAULT_USER_ID);
+        int currentPage = BundleUtils.getInt(bundle,Constants.KEYS_CURRENT_PAGE,Constants.ZERO);
+        int noOfPages = BundleUtils.getInt(bundle,Constants.KEYS_NO_OF_PAGES,Constants.ZERO);
+        user = (User) BundleUtils.getSerializable(bundle,Constants.KEYS_USER,null);
+        repos.addAll((ArrayList<Repo>)BundleUtils.getSerializable(bundle,Constants.KEYS_ITEM_LIST,new ArrayList<>()));
+        userRepoListPresenter.onCreate(username,currentPage,noOfPages);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -137,6 +161,7 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
     @Override
     public void showUserInfo(User user) {
         if (user != null) {
+            this.user = user;
             titleViewHolder.userNameTextView.setText(user.getName());
             Picasso.with(this).load(user.getAvatarUrl()).into(titleViewHolder.userAvatarImageView);
             titleViewHolder.userRepoCountTextView.setText(String.format(getString(R.string.num_repositores), user.getPublicRepos()));
@@ -150,11 +175,7 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
         noReposView.setVisibility(View.GONE);
         this.repos.addAll(repos);
         if (repoListAdapter == null) {
-            repoListAdapter = new RepoListAdapter(this.repos);
-            recyclerView.setAdapter(repoListAdapter);
-            attacher = Mugen.with(recyclerView, this);
-            attacher.loadMoreOffset(Constants.LOAD_MORE_OFFSET);
-            attacher.start();
+            canShowData();
         } else {
             repoListAdapter.notifyDataSetChanged();
         }
@@ -167,6 +188,8 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
                 .content(FormatUtils.contentForException(e))
                 .positiveText(R.string.okay)
                 .show();
+        if(loadToast!=null)
+            loadToast.error();
     }
 
     @Override
@@ -186,7 +209,7 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
     public void setLoadingState(boolean isLoading, Boolean success) {
         swipeRefreshLayout.setRefreshing(isLoading);
         if (isLoading) {
-            loadToast = new LoadToast(this).setText(getString(R.string.loading)).show();
+            loadToast = new LoadToast(this).setText(getString(R.string.loading)).setTranslationY(getTranslationYForToast()).show();
         } else if (loadToast != null && success != null) {
             if (success)
                 loadToast.success();
@@ -195,6 +218,31 @@ public class UserRepoListActivity extends AppCompatActivity implements MugenCall
             loadToast=null;
         }
 
+    }
+
+    @Override
+    public boolean canShowData() {
+        Log.e(TAG,"in canShowData, repos.size is "+repos.size()+" user is "+user);
+        if(repos.size()<1 || user == null) return false;
+        showUserInfo(user);
+        if(repoListAdapter==null)
+        {
+            repoListAdapter = new RepoListAdapter(this.repos);
+            recyclerView.setAdapter(repoListAdapter);
+            attacher = Mugen.with(recyclerView, this);
+            attacher.loadMoreOffset(Constants.LOAD_MORE_OFFSET);
+            attacher.start();
+
+        }
+        return true;
+    }
+
+    private int getTranslationYForToast() {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int ht = displaymetrics.heightPixels;
+        int spaceToLeave = getResources().getDimensionPixelSize(R.dimen.load_toast_total_margin);
+        return ht-spaceToLeave;
     }
 
 }

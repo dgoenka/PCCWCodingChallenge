@@ -3,8 +3,10 @@ package com.divyanshgoenka.pccwcodingchallenge.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 @SuppressWarnings("unused")
-public class Repo {
+public class Repo implements Serializable {
 
     @SerializedName("archive_url")
     private String mArchiveUrl;

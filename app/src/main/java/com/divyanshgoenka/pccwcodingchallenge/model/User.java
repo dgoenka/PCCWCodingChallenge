@@ -3,8 +3,10 @@ package com.divyanshgoenka.pccwcodingchallenge.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 @SuppressWarnings("unused")
-public class User {
+public class User implements Serializable {
 
     @SerializedName("avatar_url")
     private String mAvatarUrl;

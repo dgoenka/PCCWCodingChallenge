@@ -21,4 +21,6 @@ public interface UserListView {
     void clearList();
 
     void setLoadingState(boolean isLoading, Boolean success);
+
+    boolean canShowData();
 }
